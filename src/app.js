@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import uuid from 'uuid/v4';
 import Confetti from './components/confetti/confetti.jsx';
+import Hiscore from './components/hiscore/hiscore.jsx';
 import WowButton from './components/wow-button/wow-button.jsx';
 import WowCounter from './components/wow-counter/wow-counter.jsx'
+import hiscore from './hiscore.js';
 import rando from './rando.js';
 import { BACKGROUNDS, WOW_MP3 } from './constants.js';
 import './app.css';
@@ -16,6 +18,7 @@ class App extends Component {
             background: this.getBackground(),
             wows: 0,
             lastBGUpdate: 0,
+            currentHiscore: hiscore.get() || 1,
         };
     }
 
@@ -38,7 +41,8 @@ class App extends Component {
 
     handleKeypress = (event) => {
         //  32 = space bar
-        if (event.which === 32) {
+        //  Also checks if the button is in focus, which would trigger it twice
+        if (event.which === 32 && this.button !== document.activeElement) {
             return this.playSound();
         }
     }
@@ -53,6 +57,8 @@ class App extends Component {
         return background;
     };
 
+    getButtonRef = (node) => this.button = node;
+
     playSound = () => {
         this.setState(state => ({
             ...state,
@@ -60,7 +66,12 @@ class App extends Component {
             audioEls: state.audioEls.concat([
                 this.makeAudioElement(),
             ]),
-        }));
+        }), () => {
+            const { currentHiscore, wows } = this.state;
+            if (wows > currentHiscore) {
+                hiscore.set(wows);
+            }
+        });
     };
 
     makeAudioElement = () => {
@@ -77,12 +88,12 @@ class App extends Component {
         }
     };
 
-  removeAudioElement = (id) => {
-    this.setState(state => ({
-        ...state,
-        audioEls: state.audioEls.filter(el => el.id !== id),
-    }));
-  };
+    removeAudioElement = (id) => {
+        this.setState(state => ({
+            ...state,
+            audioEls: state.audioEls.filter(el => el.id !== id),
+        }));
+    };
 
     render() {
         const bgStyles = {
@@ -91,8 +102,9 @@ class App extends Component {
         return (
             <div className="app" style={bgStyles}>
                 <Confetti wows={this.state.wows} />
-                <WowButton playSound={this.playSound} />
+                <WowButton getButtonRef={this.getButtonRef} playSound={this.playSound} />
                 <WowCounter wows={this.state.wows} />
+                <Hiscore wows={this.state.wows} />
                 {this.state.audioEls.map(a => a.el)}
             </div>
         );

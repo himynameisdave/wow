@@ -1,3 +1,5 @@
+export const HISCORE_KEY = '__maxwow_hiscrore__';
+
 export const WOW_MP3 = 'https://s3-us-west-2.amazonaws.com/maximewow/wow.mp3';
 
 export const ASSETS_BASE = 'https://s3-us-west-2.amazonaws.com/maximewow/assets/'
