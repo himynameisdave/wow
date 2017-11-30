@@ -17,7 +17,11 @@ class App extends Component {
             wows: 0,
             lastBGUpdate: 0,
         };
-    };
+    }
+
+    componentDidMount() {
+        document.addEventListener('keydown', this.handleKeypress);
+    }
 
     componentDidUpdate(nextProps, nextState) {
         //  Change the BG every 25th wow
@@ -29,6 +33,13 @@ class App extends Component {
                     lastBGUpdate: nextState.wows,
                 }));
             });
+        }
+    }
+
+    handleKeypress = (event) => {
+        //  32 = space bar
+        if (event.which === 32) {
+            return this.playSound();
         }
     }
 
