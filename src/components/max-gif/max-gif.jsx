@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { WOW_MAX_PNG } from './constants.js';
 import './max-gif.css';
 
@@ -16,6 +17,12 @@ const MaxGif = ({ type, xPos, yPos }) => {
             <img src={WOW_MAX_PNG} />
         </div>
     );
+};
+
+MaxGif.propTypes = {
+    type: PropTypes.string.isRequired,
+    xPos: PropTypes.number.isRequired,
+    yPos: PropTypes.number.isRequired,
 };
 
 export default MaxGif;
