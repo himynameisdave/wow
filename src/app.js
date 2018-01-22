@@ -3,10 +3,14 @@ import uuid from 'uuid/v4';
 import Confetti from './components/confetti/confetti.jsx';
 import Hiscore from './components/hiscore/hiscore.jsx';
 import WowButton from './components/wow-button/wow-button.jsx';
-import WowCounter from './components/wow-counter/wow-counter.jsx'
+import WowCounter from './components/wow-counter/wow-counter.jsx';
 import hiscore from './hiscore.js';
 import rando from './rando.js';
-import { BACKGROUNDS, WOW_MP3 } from './constants.js';
+import {
+    BACKGROUNDS,
+    UPDATE_BG_IMAGE_COUNT,
+    WOW_MP3,
+} from './constants.js';
 import './app.css';
 
 
@@ -28,7 +32,7 @@ class App extends Component {
 
     componentDidUpdate(nextProps, nextState) {
         //  Change the BG every 25th wow
-        if (nextState.wows > 1 && nextState.wows !== this.state.lastBGUpdate && nextState.wows % 25 === 0) {
+        if (nextState.wows > 1 && nextState.wows !== this.state.lastBGUpdate && nextState.wows % UPDATE_BG_IMAGE_COUNT === 0) {
             setTimeout(() => {
                 this.setState(state => ({
                     ...state,
@@ -39,25 +43,28 @@ class App extends Component {
         }
     }
 
-    handleKeypress = (event) => {
-        //  32 = space bar
-        //  Also checks if the button is in focus, which would trigger it twice
-        if (event.which === 32 && this.button !== document.activeElement) {
+    //  Also checks if the button is in focus, which would trigger it twice
+    handleKeypress = event => {
+        const spaceBarKey = 32;
+        if (event.which === spaceBarKey && this.button !== document.activeElement) {
             return this.playSound();
         }
+        return null;
     }
 
     getBackground = () => {
         let background = rando(BACKGROUNDS);
         if (this.state && this.state.background) {
-            while(background === this.state.background) {
+            while (background === this.state.background) {
                 background = rando(BACKGROUNDS);
             }
         }
         return background;
     };
 
-    getButtonRef = (node) => this.button = node;
+    getButtonRef = node => {
+        this.button = node;
+    };
 
     playSound = () => {
         this.setState(state => ({
@@ -76,8 +83,9 @@ class App extends Component {
 
     makeAudioElement = () => {
         const id = uuid();
+        const wowTimeout = 1750;
         //  Remove this element after it plays
-        setTimeout(() => this.removeAudioElement(id), 1750);
+        setTimeout(() => this.removeAudioElement(id), wowTimeout);
         return {
             id,
             el: (
@@ -85,10 +93,10 @@ class App extends Component {
                     <source src={WOW_MP3} type="audio/mpeg" />
                 </audio>
             ),
-        }
+        };
     };
 
-    removeAudioElement = (id) => {
+    removeAudioElement = id => {
         this.setState(state => ({
             ...state,
             audioEls: state.audioEls.filter(el => el.id !== id),
@@ -102,7 +110,10 @@ class App extends Component {
         return (
             <div className="app" style={bgStyles}>
                 <Confetti wows={this.state.wows} />
-                <WowButton getButtonRef={this.getButtonRef} playSound={this.playSound} />
+                <WowButton
+                    getButtonRef={this.getButtonRef}
+                    playSound={this.playSound}
+                />
                 <WowCounter wows={this.state.wows} />
                 <Hiscore wows={this.state.wows} />
                 {this.state.audioEls.map(a => a.el)}

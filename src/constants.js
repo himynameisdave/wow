@@ -2,9 +2,11 @@ export const HISCORE_KEY = '__maxwow_hiscrore__';
 
 export const WOW_MP3 = 'https://s3-us-west-2.amazonaws.com/maximewow/wow.mp3';
 
-export const ASSETS_BASE = 'https://s3-us-west-2.amazonaws.com/maximewow/assets/'
+export const ASSETS_BASE = 'https://s3-us-west-2.amazonaws.com/maximewow/assets/';
 
 export const WOW_MAX_PNG = `${ASSETS_BASE}maxwow.png`;
+
+export const UPDATE_BG_IMAGE_COUNT = 25;
 
 export const BACKGROUNDS = [
     `${ASSETS_BASE}backgrounds/001.gif`,
